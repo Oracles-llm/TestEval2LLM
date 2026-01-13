@@ -22,30 +22,30 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            TestEvalLLM/models
-            TestEvalLLM/gguf
-          key: ${{ runner.os }}-qwen-${{ hashFiles('TestEvalLLM/requirements.txt') }}
+            TestEval2LLM/models
+            TestEval2LLM/gguf
+          key: ${{ runner.os }}-qwen-${{ hashFiles('TestEval2LLM/requirements.txt') }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-        working-directory: TestEvalLLM
+        working-directory: TestEval2LLM
 
       - name: Download model
         run: python download_model.py
-        working-directory: TestEvalLLM
+        working-directory: TestEval2LLM
 
       - name: Convert to GGUF
         run: python make_gguf.py
-        working-directory: TestEvalLLM
+        working-directory: TestEval2LLM
 
       - name: Run prompt suite
         run: python run_prompts.py
-        working-directory: TestEvalLLM
+        working-directory: TestEval2LLM
 
       - name: Upload responses
         uses: actions/upload-artifact@v4
         with:
           name: model-responses
-          path: TestEvalLLM/results/responses.jsonl
+          path: TestEval2LLM/results/responses.jsonl
