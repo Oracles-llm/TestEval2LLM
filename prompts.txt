@@ -1,4 +1,7 @@
 # Prompt set for automated CI runs.
-Explain what a transformer model is in one sentence.
-List three benefits of quantization for LLM inference.
-Write a short, friendly greeting for a new user.
+Explain how rain is formed in simple English.
+Tom is older than John. John is older than Sam. Who is the oldest and why?
+What is 23/ 7 + 15? Show steps.
+Write a short story about a robot learning to cook.
+Explain what photosynthesis is.
+Explain what photosynthesis is.
