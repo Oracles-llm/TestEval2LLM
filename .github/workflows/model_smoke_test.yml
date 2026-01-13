@@ -1,0 +1,51 @@
+name: Model Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  llama-cpp-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache model files
+        uses: actions/cache@v4
+        with:
+          path: |
+            TestEvalLLM/models
+            TestEvalLLM/gguf
+          key: ${{ runner.os }}-qwen-${{ hashFiles('TestEvalLLM/requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        working-directory: TestEvalLLM
+
+      - name: Download model
+        run: python download_model.py
+        working-directory: TestEvalLLM
+
+      - name: Convert to GGUF
+        run: python make_gguf.py
+        working-directory: TestEvalLLM
+
+      - name: Run prompt suite
+        run: python run_prompts.py
+        working-directory: TestEvalLLM
+
+      - name: Upload responses
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-responses
+          path: TestEvalLLM/results/responses.jsonl
