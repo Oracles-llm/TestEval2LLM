@@ -22,32 +22,29 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            TestEval2LLM/models
-            TestEval2LLM/gguf
-          key: ${{ runner.os }}-model-${{ hashFiles('TestEval2LLM/requirements.txt', 'TestEval2LLM/config.py') }}
+            models
+            gguf
+          key: ${{ runner.os }}-model-${{ hashFiles('requirements.txt', 'config.py') }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r TestEval2LLM/requirements.txt
+          pip install -r requirements.txt
 
       - name: Download model
         run: python download_model.py
-        working-directory: TestEval2LLM
 
       - name: Convert to GGUF
         run: python make_gguf.py
-        working-directory: TestEval2LLM
 
       - name: Run prompt suite
         run: python run_prompts.py
-        working-directory: TestEval2LLM
 
       - name: Upload responses
         uses: actions/upload-artifact@v4
         with:
           name: model-responses
-          path: TestEval2LLM/results/responses.jsonl
+          path: results/responses.jsonl
       
       - name: Trigger SystemEvaluation workflow
         env:
