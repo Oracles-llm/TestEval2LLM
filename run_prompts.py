@@ -5,6 +5,7 @@ from pathlib import Path
 
 from llama_cpp import Llama
 
+from config import get_default_gguf_name, get_gguf_root
 
 def load_prompts(path: Path) -> list[str]:
     prompts = []
@@ -52,8 +53,8 @@ def build_llm(model_path: Path) -> Llama:
 def main() -> None:
     prompts_path = Path(os.getenv("PROMPTS_FILE", "prompts.txt")).resolve()
     output_path = Path(os.getenv("OUTPUT_FILE", "results/responses.jsonl")).resolve()
-    gguf_root = Path(os.getenv("GGUF_DIR", "gguf")).resolve()
-    preferred_file = os.getenv("HF_MODEL_FILE")
+    gguf_root = get_gguf_root()
+    preferred_file = os.getenv("HF_MODEL_FILE", get_default_gguf_name())
 
     prompts = load_prompts(prompts_path)
     model_path = pick_gguf_file(gguf_root, preferred_file)

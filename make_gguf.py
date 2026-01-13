@@ -6,6 +6,12 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
+from config import (
+    get_default_gguf_name,
+    get_gguf_root,
+    get_local_model_dir,
+    get_repo_id,
+)
 
 def extract_llama_cpp_assets(tools_dir: Path, zip_path: Path) -> None:
     with zipfile.ZipFile(zip_path, "r") as zf:
@@ -46,15 +52,14 @@ def ensure_converter(tools_dir: Path) -> Path:
 
 
 def main() -> None:
-    repo_id = os.getenv("HF_REPO_ID", "Qwen/Qwen2.5-3B-Instruct")
-    model_root = Path(os.getenv("MODEL_DIR", "models")).resolve()
-    local_dir = model_root / repo_id.replace("/", "_")
+    repo_id = get_repo_id()
+    local_dir = get_local_model_dir(repo_id)
     if not local_dir.exists():
         raise RuntimeError(f"Model directory not found: {local_dir}")
 
-    gguf_root = Path(os.getenv("GGUF_DIR", "gguf")).resolve()
+    gguf_root = get_gguf_root()
     gguf_root.mkdir(parents=True, exist_ok=True)
-    out_file = gguf_root / f"{repo_id.replace('/', '_')}.f16.gguf"
+    out_file = gguf_root / get_default_gguf_name(repo_id)
     force_convert = os.getenv("FORCE_CONVERT", "").lower() in {"1", "true", "yes"}
     if out_file.exists() and not force_convert:
         print(f"GGUF already exists: {out_file}")

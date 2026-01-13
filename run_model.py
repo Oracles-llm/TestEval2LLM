@@ -3,6 +3,7 @@ from pathlib import Path
 
 from llama_cpp import Llama
 
+from config import get_default_gguf_name, get_gguf_root
 
 def pick_gguf_file(gguf_dir: Path, preferred_file: str | None) -> Path:
     if preferred_file:
@@ -36,9 +37,8 @@ def build_llm(model_path: Path) -> Llama:
 
 
 def main() -> None:
-    repo_id = os.getenv("HF_REPO_ID", "Qwen/Qwen2.5-3B-Instruct")
-    gguf_root = Path(os.getenv("GGUF_DIR", "gguf")).resolve()
-    preferred_file = os.getenv("HF_MODEL_FILE")
+    gguf_root = get_gguf_root()
+    preferred_file = os.getenv("HF_MODEL_FILE", get_default_gguf_name())
     model_path = pick_gguf_file(gguf_root, preferred_file)
     llm = build_llm(model_path)
 

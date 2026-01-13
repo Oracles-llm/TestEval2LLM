@@ -3,15 +3,19 @@ from pathlib import Path
 
 from huggingface_hub import snapshot_download
 
+from config import get_local_model_dir, get_model_root, get_repo_id
+
 
 def main() -> None:
-    repo_id = os.getenv("HF_REPO_ID", "Qwen/Qwen2.5-3B-Instruct")
-    model_root = Path(os.getenv("MODEL_DIR", "models")).resolve()
+    repo_id = get_repo_id()
+    model_root = get_model_root()
     model_root.mkdir(parents=True, exist_ok=True)
-    local_dir = model_root / repo_id.replace("/", "_")
+    local_dir = get_local_model_dir(repo_id)
     local_dir.mkdir(parents=True, exist_ok=True)
 
-    force_download = os.getenv("FORCE_DOWNLOAD", "").lower() in {"1", "true", "yes"}
+    force_download = (
+        os.getenv("FORCE_DOWNLOAD", "").lower() in {"1", "true", "yes"}
+    )
     has_local_files = (local_dir / "config.json").exists() and any(
         local_dir.glob("*.safetensors")
     )

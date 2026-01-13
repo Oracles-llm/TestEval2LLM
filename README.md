@@ -1,5 +1,8 @@
 Smoke-test repo for running a Hugging Face model with `llama-cpp-python`.
 
+Default model:
+- Edit `config.py` and update `DEFAULT_REPO_ID` to switch models in one place.
+
 Prepare the model (download weights, then convert to GGUF):
 ```bash
 python -m pip install -r requirements.txt
