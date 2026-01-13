@@ -24,7 +24,7 @@ jobs:
           path: |
             models
             gguf
-          key: ${{ runner.os }}-qwen-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-model-${{ hashFiles('requirements.txt', 'config.py') }}
 
       - name: Install dependencies
         run: |
