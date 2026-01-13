@@ -30,7 +30,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r TestEval2LLM/requirements.txt
-          pip install -r SystemEvaluation/requirements.txt
 
       - name: Download model
         run: python download_model.py
@@ -44,18 +43,19 @@ jobs:
         run: python run_prompts.py
         working-directory: TestEval2LLM
 
-      - name: Evaluate responses with SystemEvaluation
-        run: python run_eval_responses.py
-        working-directory: SystemEvaluation
-
       - name: Upload responses
         uses: actions/upload-artifact@v4
         with:
           name: model-responses
           path: TestEval2LLM/results/responses.jsonl
-
-      - name: Upload evaluation report
-        uses: actions/upload-artifact@v4
-        with:
-          name: evaluation-report
-          path: SystemEvaluation/results/*.json
+      
+      - name: Trigger SystemEvaluation workflow
+        env:
+          SYSTEMEVAL_TOKEN: ${{ secrets.SYSTEMEVAL_TOKEN }}
+          SYSTEMEVAL_REPO: Oracles-llm/SystemEvaluation
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $SYSTEMEVAL_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${SYSTEMEVAL_REPO}/dispatches" \
+            -d "{\"event_type\":\"teval_complete\",\"client_payload\":{\"source_repo\":\"${{ github.repository }}\",\"run_id\":\"${{ github.run_id }}\"}}"
