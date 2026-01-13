@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 
-DEFAULT_REPO_ID = "Qwen/Qwen3-VL-2B-Instruct"
+DEFAULT_REPO_ID = "Qwen/Qwen2-0.5B-Instruct"
 
 
 def get_repo_id() -> str:
